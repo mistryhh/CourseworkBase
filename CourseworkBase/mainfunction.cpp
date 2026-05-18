@@ -4,20 +4,12 @@
 
 
 // Needs one of the following #includes, to include the class definition
-#include "SimpleDemo.h"
-#include "BouncingBallMain.h"
-#include "MazeDemoMain.h"
-
-#include "FlashingDemo.h"
-#include "StarfieldDemo.h"
-#include "ImageMappingDemo.h"
-#include "ZoomingDemo.h"
-#include "DraggingDemo.h"
+#include "Psyhm9Game.h"
 
 
 // These are passed to initialise to determine the window size
-const int BaseScreenWidth = 1300;
-const int BaseScreenHeight = 800;
+const int BaseScreenWidth = kPsyhm9TileSize * kPsyhm9MapWidth;
+const int BaseScreenHeight = kPsyhm9TileSize * kPsyhm9MapHeight;
 
 
 // This was only moved outside of main so that I can do some memory checking once it ends.
@@ -27,20 +19,11 @@ int doProgram(int argc, char *argv[])
 	int iResult = 0;
 
 	// Uncomment only ONE of the following lines - to choose which object to create - ENSURE ONLY ONE IS CREATED.
-	// SimpleDemo oMainDemoObject;
-	// BouncingBallMain oMainDemoObject;
-	// MazeDemoMain oMainDemoObject;
-
-	// Advanced demos showing one or more facilities...
-	// FlashingDemo oMainDemoObject;
-	// StarfieldDemo oMainDemoObject;
-	// ImageMappingDemo oMainDemoObject;
-	ZoomingDemo oMainDemoObject;
-	// DraggingDemo oMainDemoObject;
+	Psyhm9Game oMainDemoObject;
 
 	char buf[1024];
 	// Screen caption can be set on following line...
-	snprintf(buf, sizeof(buf), "C++ Coursework Framework Program : Size %d x %d", BaseScreenWidth, BaseScreenHeight);
+	snprintf(buf, sizeof(buf), "Psyhm9 Platformer : Size %d x %d", BaseScreenWidth, BaseScreenHeight);
 	iResult = oMainDemoObject.initialise(buf, BaseScreenWidth, BaseScreenHeight, "resources/Cornerstone Regular.ttf", 24);
 
 	iResult = oMainDemoObject.mainLoop();

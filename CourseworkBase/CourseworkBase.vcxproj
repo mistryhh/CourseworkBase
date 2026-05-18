@@ -105,6 +105,10 @@ xcopy /y /d /i /e "$(ProjectDir)resources" "$(OutDir)resources\"</Command>
     <ClInclude Include="include\framework\DrawingSurface.h" />
     <ClInclude Include="include\framework\FilterPoints.h" />
     <ClInclude Include="header.h" />
+    <ClInclude Include="include\Psyhm9Game.h" />
+    <ClInclude Include="include\Psyhm9Level.h" />
+    <ClInclude Include="include\Psyhm9Player.h" />
+    <ClInclude Include="include\Psyhm9TileManager.h" />
     <ClInclude Include="include\framework\BaseEngine.h" />
     <ClInclude Include="include\framework\DisplayableObject.h" />
     <ClInclude Include="include\framework\FontManager.h" />
@@ -130,6 +134,10 @@ xcopy /y /d /i /e "$(ProjectDir)resources" "$(OutDir)resources\"</Command>
     <ClCompile Include="src\demos\advanced\FlashingDemo.cpp" />
     <ClCompile Include="src\demos\advanced\ImageMappingDemo.cpp" />
     <ClCompile Include="mainfunction.cpp" />
+    <ClCompile Include="src\Psyhm9Game.cpp" />
+    <ClCompile Include="src\Psyhm9Level.cpp" />
+    <ClCompile Include="src\Psyhm9Player.cpp" />
+    <ClCompile Include="src\Psyhm9TileManager.cpp" />
     <ClCompile Include="src\framework\BaseEngine.cpp" />
     <ClCompile Include="src\framework\DisplayableObject.cpp" />
     <ClCompile Include="src\framework\FontManager.cpp" />
