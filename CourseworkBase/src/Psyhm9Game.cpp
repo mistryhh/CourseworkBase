@@ -91,11 +91,42 @@ void Psyhm9Game::drawLevelBackground()
 
     int bgWidth = background.getWidth();
     int bgHeight = background.getHeight();
-    for (int x = 0; x < getWindowWidth(); x += bgWidth)
-        for (int y = 0; y < getWindowHeight(); y += bgHeight)
-            background.renderImage(getBackgroundSurface(), 0, 0, x, y, bgWidth, bgHeight);
+    int viewLeft = -m_cameraOffsetX;
+    int viewTop = -m_cameraOffsetY;
+    int viewRight = viewLeft + getWindowWidth();
+    int viewBottom = viewTop + getWindowHeight();
 
-    m_tileManager.drawAllTiles(this, getBackgroundSurface());
+    int bgStartX = (viewLeft / bgWidth) * bgWidth;
+    int bgStartY = (viewTop / bgHeight) * bgHeight;
+    for (int x = bgStartX; x < viewRight; x += bgWidth)
+        for (int y = bgStartY; y < viewBottom; y += bgHeight)
+            background.renderImageBlit(
+                this,
+                getBackgroundSurface(),
+                x, y, bgWidth, bgHeight,
+                0, 0, bgWidth, bgHeight);
+
+    if (m_level.width > 0 && m_level.height > 0)
+    {
+        int tileWidth = m_tileManager.getTileWidth();
+        int tileHeight = m_tileManager.getTileHeight();
+        int startTileX = std::max(0, viewLeft / tileWidth);
+        int startTileY = std::max(0, viewTop / tileHeight);
+        int endTileX = std::min(m_level.width - 1, (viewRight + tileWidth - 1) / tileWidth);
+        int endTileY = std::min(m_level.height - 1, (viewBottom + tileHeight - 1) / tileHeight);
+        startTileX = std::max(0, startTileX - 1);
+        startTileY = std::max(0, startTileY - 1);
+        endTileX = std::min(m_level.width - 1, endTileX + 1);
+        endTileY = std::min(m_level.height - 1, endTileY + 1);
+
+        for (int mapY = startTileY; mapY <= endTileY; ++mapY)
+            for (int mapX = startTileX; mapX <= endTileX; ++mapX)
+                m_tileManager.virtDrawTileAt(
+                    this,
+                    getBackgroundSurface(),
+                    mapX, mapY,
+                    mapX * tileWidth, mapY * tileHeight);
+    }
 
     m_goalX = m_level.goalTileX * kPsyhm9TileSize;
     m_goalY = m_level.goalTileY * kPsyhm9TileSize;
