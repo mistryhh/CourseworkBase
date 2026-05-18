@@ -29,6 +29,7 @@ Psyhm9LevelData::Psyhm9LevelData()
     , startTileY(0)
     , goalTileX(width - 1)
     , goalTileY(0)
+    , enemies()
 {
 }
 
@@ -42,6 +43,7 @@ bool Psyhm9LevelData::loadFromFile(const std::string& filePath)
     width = kPsyhm9MapWidth;
     height = kPsyhm9MapHeight;
     tiles.assign(width * height, 0);
+    enemies.clear();
     bool startSet = false;
     bool goalSet = false;
     std::vector<std::string> rows;
@@ -85,6 +87,10 @@ bool Psyhm9LevelData::loadFromFile(const std::string& filePath)
                 goalTileX = x;
                 goalTileY = y;
                 goalSet = true;
+                tileValue = 0;
+                break;
+            case 'E':
+                enemies.push_back({x, y});
                 tileValue = 0;
                 break;
             default:

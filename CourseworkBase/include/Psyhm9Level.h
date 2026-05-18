@@ -17,6 +17,12 @@ struct Psyhm9LevelData
     int startTileY;
     int goalTileX;
     int goalTileY;
+    struct EnemySpawn
+    {
+        int tileX;
+        int tileY;
+    };
+    std::vector<EnemySpawn> enemies;
 
     Psyhm9LevelData();
     bool loadFromFile(const std::string& filePath);

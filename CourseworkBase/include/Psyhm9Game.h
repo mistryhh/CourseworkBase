@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BaseEngine.h"
+#include "Psyhm9Enemy.h"
 #include "Psyhm9Level.h"
 #include "Psyhm9Player.h"
 #include "Psyhm9TileManager.h"
@@ -31,11 +32,13 @@ private:
         Playing,
         Paused,
         LevelComplete,
+        GameOver,
         GameComplete
     };
 
     void loadAssets();
     void loadLevel(int index);
+    void buildLevelObjects();
     void startLevel(int index);
     void drawLevelBackground();
     void drawMenuBackground();
@@ -43,6 +46,8 @@ private:
     void setState(GameState state);
     const SimpleImage& backgroundForTheme(const std::string& theme) const;
     bool playerReachedGoal() const;
+    bool playerHitEnemy() const;
+    bool playerFellOut() const;
 
     GameState m_state;
     Psyhm9TileManager m_tileManager;
@@ -51,6 +56,7 @@ private:
     int m_selectedLevel;
     int m_currentLevel;
     Psyhm9Player* m_player;
+    std::vector<Psyhm9Enemy*> m_enemies;
     SimpleImage m_menuBackground;
     SimpleImage m_backgroundGrass;
     SimpleImage m_backgroundSand;
@@ -61,4 +67,5 @@ private:
     SimpleImage m_menuPlayerImage;
     int m_goalX;
     int m_goalY;
+    int m_gameOverStartTime;
 };
