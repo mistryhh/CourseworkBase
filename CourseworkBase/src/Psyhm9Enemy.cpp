@@ -1,11 +1,17 @@
 #include "header.h"
 
 #include "Psyhm9Enemy.h"
+#include "Psyhm9Player.h"
+
+#include <cmath>
 
 namespace
 {
     constexpr int kMaskColour = 0x000000;
     constexpr double kEnemySpeed = 2.0;
+    constexpr double kChaseSpeed = 3.0;
+    constexpr int kChaseRangeTiles = 6;
+    constexpr int kChaseVerticalTiles = 2;
 
     void applyTransparency(SimpleImage& image)
     {
@@ -13,7 +19,7 @@ namespace
     }
 }
 
-Psyhm9Enemy::Psyhm9Enemy(BaseEngine* pEngine, Psyhm9TileManager* tileManager, int spawnTileX, int spawnTileY)
+Psyhm9Enemy::Psyhm9Enemy(BaseEngine* pEngine, Psyhm9TileManager* tileManager, Psyhm9Player* player, int spawnTileX, int spawnTileY)
     : DisplayableObject(pEngine, 0, 0, true)
     , m_tileManager(tileManager)
     , m_walkAImage(pEngine->loadImage("resources/Enemies/slime_normal_walk_a.png", true))
@@ -23,6 +29,7 @@ Psyhm9Enemy::Psyhm9Enemy(BaseEngine* pEngine, Psyhm9TileManager* tileManager, in
     , m_velocityX(kEnemySpeed)
     , m_spawnTileX(spawnTileX)
     , m_spawnTileY(spawnTileY)
+    , m_player(player)
     , m_useWalkFrameA(true)
 {
     applyTransparency(m_walkAImage);
@@ -72,13 +79,43 @@ void Psyhm9Enemy::virtDoUpdate(int iCurrentTime)
     if (getEngine()->isPaused())
         return;
 
-    double nextX = m_posX + m_velocityX;
-    if (shouldReverse(nextX))
+    double desiredVelocity = m_velocityX;
+    bool chasing = false;
+    if (m_player)
     {
-        m_velocityX = -m_velocityX;
-        nextX = m_posX + m_velocityX;
+        int playerCenterX = (m_player->getDrawingRegionLeft() + m_player->getDrawingRegionRight()) / 2;
+        int playerCenterY = (m_player->getDrawingRegionTop() + m_player->getDrawingRegionBottom()) / 2;
+        int enemyCenterX = static_cast<int>(m_posX) + m_iDrawWidth / 2;
+        int enemyCenterY = static_cast<int>(m_posY) + m_iDrawHeight / 2;
+        int dx = playerCenterX - enemyCenterX;
+        int dy = playerCenterY - enemyCenterY;
+        if (std::abs(dx) <= kChaseRangeTiles * kPsyhm9TileSize
+            && std::abs(dy) <= kChaseVerticalTiles * kPsyhm9TileSize)
+        {
+            chasing = true;
+            desiredVelocity = (dx < 0) ? -kChaseSpeed : kChaseSpeed;
+        }
     }
 
+    double nextX = m_posX + desiredVelocity;
+    if (desiredVelocity != 0.0)
+    {
+        if (shouldReverse(nextX, desiredVelocity))
+        {
+            if (chasing)
+            {
+                desiredVelocity = 0.0;
+                nextX = m_posX;
+            }
+            else
+            {
+                desiredVelocity = -desiredVelocity;
+                nextX = m_posX + desiredVelocity;
+            }
+        }
+    }
+
+    m_velocityX = desiredVelocity;
     m_posX = nextX;
     updateAnimationFrame();
 
@@ -92,9 +129,9 @@ void Psyhm9Enemy::updateAnimationFrame()
     m_useWalkFrameA = (getEngine()->getRawTime() / 200) % 2 == 0;
 }
 
-bool Psyhm9Enemy::shouldReverse(double nextX) const
+bool Psyhm9Enemy::shouldReverse(double nextX, double velocityX) const
 {
-    int direction = m_velocityX >= 0.0 ? 1 : -1;
+    int direction = velocityX >= 0.0 ? 1 : -1;
     int frontX = direction > 0 ? static_cast<int>(nextX) + m_iDrawWidth - 1 : static_cast<int>(nextX);
     int top = static_cast<int>(m_posY);
     int bottom = static_cast<int>(m_posY) + m_iDrawHeight - 1;

@@ -57,7 +57,8 @@ bool Psyhm9TileManager::isSolidTile(int mapX, int mapY) const
         return true;
     if (mapY >= getMapHeight())
         return false;
-    return getMapValue(mapX, mapY) != 0;
+    int value = getMapValue(mapX, mapY);
+    return value == kPsyhm9TileSolid || value == kPsyhm9TileSpikes;
 }
 
 bool Psyhm9TileManager::isSolidAtPixel(int screenX, int screenY) const
@@ -67,14 +68,50 @@ bool Psyhm9TileManager::isSolidAtPixel(int screenX, int screenY) const
     return isSolidTile(mapX, mapY);
 }
 
+bool Psyhm9TileManager::isHazardTile(int mapX, int mapY) const
+{
+    if (mapX < 0 || mapX >= getMapWidth() || mapY < 0 || mapY >= getMapHeight())
+        return false;
+    int value = getMapValue(mapX, mapY);
+    return value == kPsyhm9TileSpikes || value == kPsyhm9TileLava;
+}
+
 void Psyhm9TileManager::virtDrawTileAt(
     BaseEngine* pEngine,
     DrawingSurface* pSurface,
     int iMapX, int iMapY,
     int iStartPositionScreenX, int iStartPositionScreenY) const
 {
-    if (getMapValue(iMapX, iMapY) == 0)
+    int tileValue = getMapValue(iMapX, iMapY);
+    if (tileValue == kPsyhm9TileEmpty)
         return;
+
+    if (tileValue == kPsyhm9TileSpikes)
+    {
+        m_tileSet.spikes.renderImageBlit(
+            pEngine,
+            pSurface,
+            iStartPositionScreenX, iStartPositionScreenY,
+            getTileWidth(), getTileHeight(),
+            0, 0,
+            m_tileSet.spikes.getWidth(), m_tileSet.spikes.getHeight());
+        return;
+    }
+
+    if (tileValue == kPsyhm9TileLava)
+    {
+        const SimpleImage& lavaFrame = ((pEngine->getRawTime() / kAnimatedTileFrameMs) % 2 == 0)
+            ? m_tileSet.lavaTop
+            : m_tileSet.lavaTopLow;
+        lavaFrame.renderImageBlit(
+            pEngine,
+            pSurface,
+            iStartPositionScreenX, iStartPositionScreenY,
+            getTileWidth(), getTileHeight(),
+            0, 0,
+            lavaFrame.getWidth(), lavaFrame.getHeight());
+        return;
+    }
 
     bool solidAbove = isSolidTile(iMapX, iMapY - 1);
     bool solidBelow = isSolidTile(iMapX, iMapY + 1);
@@ -130,4 +167,7 @@ void Psyhm9TileManager::loadTileSet(const std::string& theme)
     m_tileSet.blockLeft = loadTile(prefix + "block_left.png");
     m_tileSet.blockRight = loadTile(prefix + "block_right.png");
     m_tileSet.blockCenter = loadTile(prefix + "block_center.png");
+    m_tileSet.spikes = loadTile("resources/Tiles/spikes.png");
+    m_tileSet.lavaTop = loadTile("resources/Tiles/lava_top.png");
+    m_tileSet.lavaTopLow = loadTile("resources/Tiles/lava_top_low.png");
 }

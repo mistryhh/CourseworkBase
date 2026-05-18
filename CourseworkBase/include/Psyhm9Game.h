@@ -5,6 +5,7 @@
 #include "Psyhm9Level.h"
 #include "Psyhm9Player.h"
 #include "Psyhm9TileManager.h"
+#include "ExampleFilterPointClasses.h"
 
 #include <string>
 #include <vector>
@@ -47,7 +48,13 @@ private:
     const SimpleImage& backgroundForTheme(const std::string& theme) const;
     bool playerReachedGoal() const;
     bool playerHitEnemy() const;
+    bool playerHitHazard() const;
     bool playerFellOut() const;
+    void updateCamera(bool forceRedraw);
+    void updateCameraOffsets();
+    void setCameraOffset(int offsetX, int offsetY);
+    int uiX(int screenX) const;
+    int uiY(int screenY) const;
 
     GameState m_state;
     Psyhm9TileManager m_tileManager;
@@ -68,4 +75,9 @@ private:
     int m_goalX;
     int m_goalY;
     int m_gameOverStartTime;
+    FilterPointsTranslation m_cameraTranslation;
+    int m_cameraOffsetX;
+    int m_cameraOffsetY;
+    int m_lastAnimatedFrame;
+    bool m_levelHasAnimatedTiles;
 };
