@@ -11,6 +11,12 @@ namespace
     constexpr double kGravity = 0.8;
     constexpr double kJumpSpeed = -16.0;
     constexpr double kMaxFallSpeed = 18.0;
+    constexpr int kMaskColour = 0x000000;
+
+    void applyTransparency(SimpleImage& image)
+    {
+        image.setTransparencyColour(kMaskColour);
+    }
 }
 
 Psyhm9Player::Psyhm9Player(BaseEngine* pEngine, Psyhm9TileManager* tileManager)
@@ -29,8 +35,13 @@ Psyhm9Player::Psyhm9Player(BaseEngine* pEngine, Psyhm9TileManager* tileManager)
     , m_spawnY(0)
     , m_useWalkFrameA(true)
 {
-    m_iDrawWidth = m_idleImage.getWidth();
-    m_iDrawHeight = m_idleImage.getHeight();
+    applyTransparency(m_idleImage);
+    applyTransparency(m_walkAImage);
+    applyTransparency(m_walkBImage);
+    applyTransparency(m_jumpImage);
+
+    m_iDrawWidth = kPsyhm9TileSize;
+    m_iDrawHeight = kPsyhm9TileSize;
     m_iStartDrawPosX = 0;
     m_iStartDrawPosY = 0;
     setVisible(true);
@@ -66,12 +77,14 @@ void Psyhm9Player::virtDraw()
     else if (std::abs(m_velocityX) > 0.1)
         frame = m_useWalkFrameA ? &m_walkAImage : &m_walkBImage;
 
-    frame->renderImageWithMask(
+    frame->renderImageBlit(
+        getEngine(),
         getEngine()->getForegroundSurface(),
-        0, 0,
         m_iCurrentScreenX + m_iStartDrawPosX,
         m_iCurrentScreenY + m_iStartDrawPosY,
-        m_iDrawWidth, m_iDrawHeight);
+        m_iDrawWidth, m_iDrawHeight,
+        0, 0,
+        frame->getWidth(), frame->getHeight());
 }
 
 void Psyhm9Player::virtDoUpdate(int iCurrentTime)

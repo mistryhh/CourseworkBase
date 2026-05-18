@@ -89,7 +89,7 @@ public:
 	*/
 	void renderImageBlit(BaseEngine* pEngine, DrawingSurface* pTarget,
 		int iXDrawLocation, int iYDrawLocation, int iTargetWidth, int iTargetHeight,
-		int iLeftInImage, int iTopInImage, int iWidthInImage, int iHeightInImage);
+		int iLeftInImage, int iTopInImage, int iWidthInImage, int iHeightInImage) const;
 
 
 	// Modify the size and position of image to draw to fit onto target
@@ -147,8 +147,7 @@ protected:
 	std::shared_ptr<RawImageData> theData;
 
 	// Surface used only for rescaling when using a blit. Cached to avoid continuous recreation.
-	SDL_Surface* m_pRescaleSurface;
+	mutable SDL_Surface* m_pRescaleSurface;
 };
-
 
 

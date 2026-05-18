@@ -4,6 +4,11 @@
 
 #include <cstdio>
 
+namespace
+{
+    constexpr int kMaskColour = 0x000000;
+}
+
 Psyhm9Game::Psyhm9Game()
     : m_state(GameState::Menu)
     , m_tileManager()
@@ -40,6 +45,8 @@ void Psyhm9Game::loadAssets()
     m_backgroundPurple = loadImage("resources/Backgrounds/background_color_mushrooms.png", true);
     m_flagImage = loadImage("resources/Tiles/flag_green_a.png", true);
     m_menuPlayerImage = loadImage("resources/Characters/character_green_front.png", true);
+    m_flagImage.setTransparencyColour(kMaskColour);
+    m_menuPlayerImage.setTransparencyColour(kMaskColour);
 }
 
 int Psyhm9Game::virtInitialiseObjects()
@@ -85,10 +92,12 @@ void Psyhm9Game::drawLevelBackground()
 
     m_goalX = m_level.goalTileX * kPsyhm9TileSize;
     m_goalY = m_level.goalTileY * kPsyhm9TileSize;
-    m_flagImage.renderImageWithMask(
+    m_flagImage.renderImageBlit(
+        this,
         getBackgroundSurface(),
-        0, 0,
         m_goalX, m_goalY,
+        kPsyhm9TileSize, kPsyhm9TileSize,
+        0, 0,
         m_flagImage.getWidth(), m_flagImage.getHeight());
 }
 
@@ -105,16 +114,20 @@ void Psyhm9Game::drawMenuBackground()
 
     int previewPlayerX = m_level.goalTileX * kPsyhm9TileSize - kPsyhm9TileSize;
     int previewPlayerY = m_level.goalTileY * kPsyhm9TileSize;
-    m_menuPlayerImage.renderImageWithMask(
+    m_menuPlayerImage.renderImageBlit(
+        this,
         getBackgroundSurface(),
-        0, 0,
         previewPlayerX, previewPlayerY,
+        kPsyhm9TileSize, kPsyhm9TileSize,
+        0, 0,
         m_menuPlayerImage.getWidth(), m_menuPlayerImage.getHeight());
 
-    m_flagImage.renderImageWithMask(
+    m_flagImage.renderImageBlit(
+        this,
         getBackgroundSurface(),
-        0, 0,
         m_level.goalTileX * kPsyhm9TileSize, m_level.goalTileY * kPsyhm9TileSize,
+        kPsyhm9TileSize, kPsyhm9TileSize,
+        0, 0,
         m_flagImage.getWidth(), m_flagImage.getHeight());
 }
 
@@ -316,9 +329,9 @@ bool Psyhm9Game::playerReachedGoal() const
     int playerBottom = m_player->getDrawingRegionBottom();
 
     int goalLeft = m_goalX;
-    int goalRight = m_goalX + m_flagImage.getWidth();
+    int goalRight = m_goalX + kPsyhm9TileSize;
     int goalTop = m_goalY;
-    int goalBottom = m_goalY + m_flagImage.getHeight();
+    int goalBottom = m_goalY + kPsyhm9TileSize;
 
     return !(playerRight < goalLeft || playerLeft > goalRight || playerBottom < goalTop || playerTop > goalBottom);
 }
