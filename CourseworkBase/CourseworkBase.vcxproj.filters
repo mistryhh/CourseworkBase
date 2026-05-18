@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\framework">
+      <UniqueIdentifier>{a1b2c3d4-e5f6-4a5b-8c9d-1e2f3a4b5c6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\demos">
+      <UniqueIdentifier>{b2c3d4e5-f6a7-4b5c-9d8e-2f3a4b5c6d7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\demos\advanced">
+      <UniqueIdentifier>{c3d4e5f6-a7b8-4c5d-8e9f-3a4b5c6d7e8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source Files\framework">
+      <UniqueIdentifier>{d4e5f6a7-b8c9-4d5e-9f0a-4b5c6d7e8f9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\demos">
+      <UniqueIdentifier>{e5f6a7b8-c9d0-4e5f-0a1b-5c6d7e8f9a0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\demos\advanced">
+      <UniqueIdentifier>{f6a7b8c9-d0e1-4f5a-1b2c-6d7e8f9a0b1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="header.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\framework\BaseEngine.h">
+      <Filter>Header Files\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\framework\DisplayableObject.h">
+      <Filter>Header Files\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\framework\DisplayableObjectContainer.h">
+      <Filter>Header Files\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\framework\DrawingSurface.h">
+      <Filter>Header Files\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\framework\FilterPoints.h">
+      <Filter>Header Files\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\framework\FontManager.h">
+      <Filter>Header Files\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\framework\ImageManager.h">
+      <Filter>Header Files\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\framework\ImagePixelMapping.h">
+      <Filter>Header Files\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\framework\RawImageData.h">
+      <Filter>Header Files\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\framework\SimpleImage.h">
+      <Filter>Header Files\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\framework\TileManager.h">
+      <Filter>Header Files\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\framework\UtilCachedSimpleTrig.h">
+      <Filter>Header Files\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\framework\UtilCollisionDetection.h">
+      <Filter>Header Files\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\framework\UtilDragAlignment.h">
+      <Filter>Header Files\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\framework\UtilMovementPosition.h">
+      <Filter>Header Files\framework</Filter>
+    </ClInclude>
+    <ClInclude Include="include\demos\BouncingBall.h">
+      <Filter>Header Files\demos</Filter>
+    </ClInclude>
+    <ClInclude Include="include\demos\BouncingBallMain.h">
+      <Filter>Header Files\demos</Filter>
+    </ClInclude>
+    <ClInclude Include="include\demos\ExampleObjects.h">
+      <Filter>Header Files\demos</Filter>
+    </ClInclude>
+    <ClInclude Include="include\demos\MazeDemoMain.h">
+      <Filter>Header Files\demos</Filter>
+    </ClInclude>
+    <ClInclude Include="include\demos\MazeDemoObject.h">
+      <Filter>Header Files\demos</Filter>
+    </ClInclude>
+    <ClInclude Include="include\demos\MazeDemoTileManager.h">
+      <Filter>Header Files\demos</Filter>
+    </ClInclude>
+    <ClInclude Include="include\demos\SimpleDemo.h">
+      <Filter>Header Files\demos</Filter>
+    </ClInclude>
+    <ClInclude Include="include\demos\advanced\DraggingDemo.h">
+      <Filter>Header Files\demos\advanced</Filter>
+    </ClInclude>
+    <ClInclude Include="include\demos\advanced\ExampleDragableObjects.h">
+      <Filter>Header Files\demos\advanced</Filter>
+    </ClInclude>
+    <ClInclude Include="include\demos\advanced\ExampleFilterPointClasses.h">
+      <Filter>Header Files\demos\advanced</Filter>
+    </ClInclude>
+    <ClInclude Include="include\demos\advanced\FlashingDemo.h">
+      <Filter>Header Files\demos\advanced</Filter>
+    </ClInclude>
+    <ClInclude Include="include\demos\advanced\ImageMappingDemo.h">
+      <Filter>Header Files\demos\advanced</Filter>
+    </ClInclude>
+    <ClInclude Include="include\demos\advanced\SimpleFlashingDragableImageObject.h">
+      <Filter>Header Files\demos\advanced</Filter>
+    </ClInclude>
+    <ClInclude Include="include\demos\advanced\StarfieldDemo.h">
+      <Filter>Header Files\demos\advanced</Filter>
+    </ClInclude>
+    <ClInclude Include="include\demos\advanced\ZoomingDemo.h">
+      <Filter>Header Files\demos\advanced</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="mainfunction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\framework\BaseEngine.cpp">
+      <Filter>Source Files\framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\framework\DisplayableObject.cpp">
+      <Filter>Source Files\framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\framework\DrawingSurface.cpp">
+      <Filter>Source Files\framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\framework\FontManager.cpp">
+      <Filter>Source Files\framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\framework\SimpleImage.cpp">
+      <Filter>Source Files\framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\framework\TileManager.cpp">
+      <Filter>Source Files\framework</Filter>
+    </ClCompile>
+    <ClCompile Include="src\demos\BouncingBall.cpp">
+      <Filter>Source Files\demos</Filter>
+    </ClCompile>
+    <ClCompile Include="src\demos\BouncingBallMain.cpp">
+      <Filter>Source Files\demos</Filter>
+    </ClCompile>
+    <ClCompile Include="src\demos\MazeDemoMain.cpp">
+      <Filter>Source Files\demos</Filter>
+    </ClCompile>
+    <ClCompile Include="src\demos\MazeDemoObject.cpp">
+      <Filter>Source Files\demos</Filter>
+    </ClCompile>
+    <ClCompile Include="src\demos\MazeDemoTileManager.cpp">
+      <Filter>Source Files\demos</Filter>
+    </ClCompile>
+    <ClCompile Include="src\demos\SimpleDemo.cpp">
+      <Filter>Source Files\demos</Filter>
+    </ClCompile>
+    <ClCompile Include="src\demos\advanced\DraggingDemo.cpp">
+      <Filter>Source Files\demos\advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="src\demos\advanced\FlashingDemo.cpp">
+      <Filter>Source Files\demos\advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="src\demos\advanced\ImageMappingDemo.cpp">
+      <Filter>Source Files\demos\advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="src\demos\advanced\StarfieldDemo.cpp">
+      <Filter>Source Files\demos\advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="src\demos\advanced\ZoomingDemo.cpp">
+      <Filter>Source Files\demos\advanced</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

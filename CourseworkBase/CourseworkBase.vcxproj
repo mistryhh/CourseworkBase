@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{63F64093-23C3-4181-8554-C22C5AE2DDAC}</ProjectGuid>
+    <RootNamespace>CourseworkBase</RootNamespace>
+    <ProjectName>CourseworkBase</ProjectName>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)/$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)/$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..\SDL\include;$(ProjectDir);$(ProjectDir)include;$(ProjectDir)include\framework;$(ProjectDir)include\demos;$(ProjectDir)include\demos\advanced;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <BrowseInformation>true</BrowseInformation>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <PreprocessorDefinitions>_DEBUG</PreprocessorDefinitions>
+      <WarningLevel>Level2</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>SDL3.lib;SDL3_image.lib;SDL3_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\SDL\libx86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateMapFile>true</GenerateMapFile>
+      <MapFileName>$(OutDir)$(TargetName).map</MapFileName>
+      <MapExports>false</MapExports>
+      <SubSystem>Console</SubSystem>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d /i "$(SolutionDir)SDL\SDL3_dlls_x86\*.*" "$(OutDir)"
+xcopy /y /d /i /e "$(ProjectDir)resources" "$(OutDir)resources\"</Command>
+      <Message>Copying SDL DLLs and resources to output directory...</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\SDL\include;$(ProjectDir);$(ProjectDir)include;$(ProjectDir)include\framework;$(ProjectDir)include\demos;$(ProjectDir)include\demos\advanced;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PreprocessorDefinitions>_NDEBUG</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>SDL3.lib;SDL3_image.lib;SDL3_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\SDL\libx86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <SubSystem>Windows</SubSystem>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d /i "$(SolutionDir)SDL\SDL3_dlls_x86\*.*" "$(OutDir)"
+xcopy /y /d /i /e "$(ProjectDir)resources" "$(OutDir)resources\"</Command>
+      <Message>Copying SDL DLLs and resources to output directory...</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="include\demos\advanced\DraggingDemo.h" />
+    <ClInclude Include="include\demos\advanced\FlashingDemo.h" />
+    <ClInclude Include="include\demos\advanced\ImageMappingDemo.h" />
+    <ClInclude Include="include\demos\advanced\SimpleFlashingDragableImageObject.h" />
+    <ClInclude Include="include\demos\advanced\StarfieldDemo.h" />
+    <ClInclude Include="include\framework\UtilCollisionDetection.h" />
+    <ClInclude Include="include\framework\DisplayableObjectContainer.h" />
+    <ClInclude Include="include\demos\advanced\ExampleDragableObjects.h" />
+    <ClInclude Include="include\framework\UtilDragAlignment.h" />
+    <ClInclude Include="include\demos\advanced\ExampleFilterPointClasses.h" />
+    <ClInclude Include="include\framework\DrawingSurface.h" />
+    <ClInclude Include="include\framework\FilterPoints.h" />
+    <ClInclude Include="header.h" />
+    <ClInclude Include="include\framework\BaseEngine.h" />
+    <ClInclude Include="include\framework\DisplayableObject.h" />
+    <ClInclude Include="include\framework\FontManager.h" />
+    <ClInclude Include="include\framework\ImagePixelMapping.h" />
+    <ClInclude Include="include\framework\ImageManager.h" />
+    <ClInclude Include="include\framework\SimpleImage.h" />
+    <ClInclude Include="include\framework\UtilMovementPosition.h" />
+    <ClInclude Include="include\framework\RawImageData.h" />
+    <ClInclude Include="include\demos\ExampleObjects.h" />
+    <ClInclude Include="include\framework\UtilCachedSimpleTrig.h" />
+    <ClInclude Include="include\framework\TileManager.h" />
+    <ClInclude Include="include\demos\BouncingBall.h" />
+    <ClInclude Include="include\demos\BouncingBallMain.h" />
+    <ClInclude Include="include\demos\MazeDemoMain.h" />
+    <ClInclude Include="include\demos\MazeDemoObject.h" />
+    <ClInclude Include="include\demos\MazeDemoTileManager.h" />
+    <ClInclude Include="include\demos\SimpleDemo.h" />
+    <ClInclude Include="include\demos\advanced\ZoomingDemo.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\demos\advanced\DraggingDemo.cpp" />
+    <ClCompile Include="src\framework\DrawingSurface.cpp" />
+    <ClCompile Include="src\demos\advanced\FlashingDemo.cpp" />
+    <ClCompile Include="src\demos\advanced\ImageMappingDemo.cpp" />
+    <ClCompile Include="mainfunction.cpp" />
+    <ClCompile Include="src\framework\BaseEngine.cpp" />
+    <ClCompile Include="src\framework\DisplayableObject.cpp" />
+    <ClCompile Include="src\framework\FontManager.cpp" />
+    <ClCompile Include="src\framework\SimpleImage.cpp" />
+    <ClCompile Include="src\demos\SimpleDemo.cpp" />
+    <ClCompile Include="src\demos\advanced\StarfieldDemo.cpp" />
+    <ClCompile Include="src\framework\TileManager.cpp" />
+    <ClCompile Include="src\demos\BouncingBall.cpp" />
+    <ClCompile Include="src\demos\BouncingBallMain.cpp" />
+    <ClCompile Include="src\demos\MazeDemoMain.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\demos\MazeDemoObject.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\demos\MazeDemoTileManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\demos\advanced\ZoomingDemo.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
