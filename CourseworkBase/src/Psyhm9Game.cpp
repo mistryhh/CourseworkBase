@@ -16,8 +16,10 @@ Psyhm9Game::Psyhm9Game()
     , m_selectedLevel(0)
     , m_currentLevel(0)
     , m_player(nullptr)
+    , m_enemies()
     , m_goalX(0)
     , m_goalY(0)
+    , m_gameOverStartTime(0)
 {
 }
 
@@ -38,10 +40,10 @@ int Psyhm9Game::virtInitialise()
 void Psyhm9Game::loadAssets()
 {
     m_menuBackground = loadImage("resources/Backgrounds/background_color_hills.png", true);
-    m_backgroundGrass = loadImage("resources/Backgrounds/background_solid_grass.png", true);
-    m_backgroundSand = loadImage("resources/Backgrounds/background_solid_sand.png", true);
-    m_backgroundDirt = loadImage("resources/Backgrounds/background_solid_dirt.png", true);
-    m_backgroundSnow = loadImage("resources/Backgrounds/background_solid_cloud.png", true);
+    m_backgroundGrass = loadImage("resources/Backgrounds/background_color_hills.png", true);
+    m_backgroundSand = loadImage("resources/Backgrounds/background_color_desert.png", true);
+    m_backgroundDirt = loadImage("resources/Backgrounds/background_color_trees.png", true);
+    m_backgroundSnow = loadImage("resources/Backgrounds/background_solid_sky.png", true);
     m_backgroundPurple = loadImage("resources/Backgrounds/background_color_mushrooms.png", true);
     m_flagImage = loadImage("resources/Tiles/flag_green_a.png", true);
     m_menuPlayerImage = loadImage("resources/Characters/character_green_front.png", true);
@@ -51,13 +53,7 @@ void Psyhm9Game::loadAssets()
 
 int Psyhm9Game::virtInitialiseObjects()
 {
-    drawableObjectsChanged();
-    destroyOldObjects(true);
-
-    createObjectArray(1);
-    m_player = new Psyhm9Player(this, &m_tileManager);
-    storeObjectInArray(0, m_player);
-    m_player->setSpawnPosition(m_level.startTileX * kPsyhm9TileSize, m_level.startTileY * kPsyhm9TileSize);
+    buildLevelObjects();
     return 0;
 }
 
@@ -71,6 +67,7 @@ void Psyhm9Game::virtSetupBackgroundBuffer()
     case GameState::Playing:
     case GameState::Paused:
     case GameState::LevelComplete:
+    case GameState::GameOver:
     case GameState::GameComplete:
         drawLevelBackground();
         break;
@@ -109,26 +106,6 @@ void Psyhm9Game::drawMenuBackground()
     for (int x = 0; x < getWindowWidth(); x += bgWidth)
         for (int y = 0; y < getWindowHeight(); y += bgHeight)
             m_menuBackground.renderImage(getBackgroundSurface(), 0, 0, x, y, bgWidth, bgHeight);
-
-    m_tileManager.drawAllTiles(this, getBackgroundSurface());
-
-    int previewPlayerX = m_level.goalTileX * kPsyhm9TileSize - kPsyhm9TileSize;
-    int previewPlayerY = m_level.goalTileY * kPsyhm9TileSize;
-    m_menuPlayerImage.renderImageBlit(
-        this,
-        getBackgroundSurface(),
-        previewPlayerX, previewPlayerY,
-        kPsyhm9TileSize, kPsyhm9TileSize,
-        0, 0,
-        m_menuPlayerImage.getWidth(), m_menuPlayerImage.getHeight());
-
-    m_flagImage.renderImageBlit(
-        this,
-        getBackgroundSurface(),
-        m_level.goalTileX * kPsyhm9TileSize, m_level.goalTileY * kPsyhm9TileSize,
-        kPsyhm9TileSize, kPsyhm9TileSize,
-        0, 0,
-        m_flagImage.getWidth(), m_flagImage.getHeight());
 }
 
 void Psyhm9Game::virtDrawStringsUnderneath()
@@ -151,6 +128,9 @@ void Psyhm9Game::virtDrawStringsUnderneath()
     case GameState::LevelComplete:
         std::snprintf(buffer, sizeof(buffer), "Level %d complete! ENTER for next level, M for menu.", m_currentLevel + 1);
         drawForegroundString(40, 30, buffer, 0x00ff99, nullptr);
+        break;
+    case GameState::GameOver:
+        drawForegroundString(40, 30, "Game over! Restarting level...", 0xff6666, nullptr);
         break;
     case GameState::GameComplete:
         drawForegroundString(40, 30, "All levels complete! ENTER for menu.", 0x00ff99, nullptr);
@@ -247,6 +227,16 @@ void Psyhm9Game::virtKeyDown(int iKeyCode)
             setState(GameState::Menu);
         }
         break;
+    case GameState::GameOver:
+        if (iKeyCode == SDLK_RETURN || iKeyCode == SDLK_KP_ENTER || iKeyCode == SDLK_r)
+        {
+            startLevel(m_currentLevel);
+        }
+        else if (iKeyCode == SDLK_m)
+        {
+            setState(GameState::Menu);
+        }
+        break;
     case GameState::GameComplete:
         if (iKeyCode == SDLK_RETURN || iKeyCode == SDLK_KP_ENTER)
             setState(GameState::Menu);
@@ -256,8 +246,26 @@ void Psyhm9Game::virtKeyDown(int iKeyCode)
 
 void Psyhm9Game::virtMainLoopPostUpdate()
 {
-    if (m_state == GameState::Playing && playerReachedGoal())
-        setState(GameState::LevelComplete);
+    if (m_state == GameState::Playing)
+    {
+        if (playerReachedGoal())
+        {
+            setState(GameState::LevelComplete);
+            return;
+        }
+        if (playerHitEnemy() || playerFellOut())
+        {
+            m_gameOverStartTime = getRawTime();
+            setState(GameState::GameOver);
+            return;
+        }
+    }
+
+    if (m_state == GameState::GameOver)
+    {
+        if (getRawTime() - m_gameOverStartTime > 1400)
+            startLevel(m_currentLevel);
+    }
 }
 
 void Psyhm9Game::drawAllObjects()
@@ -281,12 +289,32 @@ void Psyhm9Game::loadLevel(int index)
         m_tileManager.loadFromLevel(m_level);
 }
 
+void Psyhm9Game::buildLevelObjects()
+{
+    drawableObjectsChanged();
+    destroyOldObjects(true);
+    m_enemies.clear();
+
+    int enemyCount = static_cast<int>(m_level.enemies.size());
+    createObjectArray(1 + enemyCount);
+    m_player = new Psyhm9Player(this, &m_tileManager);
+    storeObjectInArray(0, m_player);
+    m_player->setSpawnPosition(m_level.startTileX * kPsyhm9TileSize, m_level.startTileY * kPsyhm9TileSize);
+
+    for (int i = 0; i < enemyCount; ++i)
+    {
+        const auto& enemy = m_level.enemies[i];
+        Psyhm9Enemy* enemyObject = new Psyhm9Enemy(this, &m_tileManager, enemy.tileX, enemy.tileY);
+        storeObjectInArray(i + 1, enemyObject);
+        m_enemies.push_back(enemyObject);
+    }
+}
+
 void Psyhm9Game::startLevel(int index)
 {
     m_currentLevel = index;
     loadLevel(index);
-    if (m_player)
-        m_player->setSpawnPosition(m_level.startTileX * kPsyhm9TileSize, m_level.startTileY * kPsyhm9TileSize);
+    buildLevelObjects();
     setState(GameState::Playing);
 }
 
@@ -295,7 +323,7 @@ void Psyhm9Game::setState(GameState state)
     m_state = state;
     if (m_state == GameState::Playing)
         unpause();
-    else if (m_state == GameState::Paused || m_state == GameState::LevelComplete)
+    else if (m_state == GameState::Paused || m_state == GameState::LevelComplete || m_state == GameState::GameOver)
         pause();
 
     if (m_state == GameState::Menu)
@@ -334,4 +362,39 @@ bool Psyhm9Game::playerReachedGoal() const
     int goalBottom = m_goalY + kPsyhm9TileSize;
 
     return !(playerRight < goalLeft || playerLeft > goalRight || playerBottom < goalTop || playerTop > goalBottom);
+}
+
+bool Psyhm9Game::playerHitEnemy() const
+{
+    if (!m_player)
+        return false;
+
+    int playerLeft = m_player->getDrawingRegionLeft();
+    int playerRight = m_player->getDrawingRegionRight();
+    int playerTop = m_player->getDrawingRegionTop();
+    int playerBottom = m_player->getDrawingRegionBottom();
+
+    for (const auto* enemy : m_enemies)
+    {
+        if (!enemy)
+            continue;
+
+        int enemyLeft = enemy->getDrawingRegionLeft();
+        int enemyRight = enemy->getDrawingRegionRight();
+        int enemyTop = enemy->getDrawingRegionTop();
+        int enemyBottom = enemy->getDrawingRegionBottom();
+
+        if (!(playerRight < enemyLeft || playerLeft > enemyRight || playerBottom < enemyTop || playerTop > enemyBottom))
+            return true;
+    }
+
+    return false;
+}
+
+bool Psyhm9Game::playerFellOut() const
+{
+    if (!m_player)
+        return false;
+
+    return m_player->getDrawingRegionTop() > getWindowHeight();
 }

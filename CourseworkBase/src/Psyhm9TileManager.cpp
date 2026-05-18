@@ -53,8 +53,10 @@ void Psyhm9TileManager::loadFromLevel(const Psyhm9LevelData& level)
 
 bool Psyhm9TileManager::isSolidTile(int mapX, int mapY) const
 {
-    if (mapX < 0 || mapY < 0 || mapX >= getMapWidth() || mapY >= getMapHeight())
+    if (mapX < 0 || mapX >= getMapWidth() || mapY < 0)
         return true;
+    if (mapY >= getMapHeight())
+        return false;
     return getMapValue(mapX, mapY) != 0;
 }
 
