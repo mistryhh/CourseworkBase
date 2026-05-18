@@ -1,5 +1,6 @@
 #include "header.h"
 #include "Psyhm9Game.h"
+#include <algorithm>
 #include <cstdio>
 
 namespace
@@ -18,6 +19,11 @@ Psyhm9Game::Psyhm9Game()
     , m_goalX(0)
     , m_goalY(0)
     , m_gameOverStartTime(0)
+    , m_cameraTranslation(0, 0, this)
+    , m_cameraOffsetX(0)
+    , m_cameraOffsetY(0)
+    , m_lastAnimatedFrame(-1)
+    , m_levelHasAnimatedTiles(false)
 {
 }
 
@@ -31,6 +37,8 @@ int Psyhm9Game::virtInitialise()
         "resources/levels/Psyhm9_level5.txt"
     };
     loadAssets();
+    getBackgroundSurface()->setDrawPointsFilter(&m_cameraTranslation);
+    getForegroundSurface()->setDrawPointsFilter(&m_cameraTranslation);
     loadLevel(m_selectedLevel);
     return BaseEngine::virtInitialise();
 }
@@ -112,26 +120,26 @@ void Psyhm9Game::virtDrawStringsUnderneath()
     switch (m_state)
     {
     case GameState::Menu:
-        drawForegroundString(40, 30, "Kenney 2D Platformer - Psyhm9", 0xffffff, nullptr);
-        drawForegroundString(40, 70, "Level complete preview below. Use LEFT/RIGHT to select level, ENTER to play.", 0xffffff, nullptr);
+        drawForegroundString(uiX(40), uiY(30), "Kenney 2D Platformer - Psyhm9", 0xffffff, nullptr);
+        drawForegroundString(uiX(40), uiY(70), "Level complete preview below. Use LEFT/RIGHT to select level, ENTER to play.", 0xffffff, nullptr);
         drawSelectionRow(60, getWindowHeight() - 140);
         break;
     case GameState::Playing:
         std::snprintf(buffer, sizeof(buffer), "Level %d - P to pause, R to reload, M for menu", m_currentLevel + 1);
-        drawForegroundString(40, 30, buffer, 0xffffff, nullptr);
+        drawForegroundString(uiX(40), uiY(30), buffer, 0xffffff, nullptr);
         break;
     case GameState::Paused:
-        drawForegroundString(40, 30, "Paused - Press P to resume or M for menu", 0xffffff, nullptr);
+        drawForegroundString(uiX(40), uiY(30), "Paused - Press P to resume or M for menu", 0xffffff, nullptr);
         break;
     case GameState::LevelComplete:
         std::snprintf(buffer, sizeof(buffer), "Level %d complete! ENTER for next level, M for menu.", m_currentLevel + 1);
-        drawForegroundString(40, 30, buffer, 0x00ff99, nullptr);
+        drawForegroundString(uiX(40), uiY(30), buffer, 0x00ff99, nullptr);
         break;
     case GameState::GameOver:
-        drawForegroundString(40, 30, "Game over! Restarting level...", 0xff6666, nullptr);
+        drawForegroundString(uiX(40), uiY(30), "Game over! Restarting level...", 0xff6666, nullptr);
         break;
     case GameState::GameComplete:
-        drawForegroundString(40, 30, "All levels complete! ENTER for menu.", 0x00ff99, nullptr);
+        drawForegroundString(uiX(40), uiY(30), "All levels complete! ENTER for menu.", 0x00ff99, nullptr);
         break;
     }
 }
@@ -139,15 +147,17 @@ void Psyhm9Game::virtDrawStringsUnderneath()
 void Psyhm9Game::virtDrawStringsOnTop()
 {
     if (m_state == GameState::Menu)
-        drawForegroundString(40, 110, "Use SPACE in game to jump, arrows/A-D to move.", 0xffffff, nullptr);
+        drawForegroundString(uiX(40), uiY(110), "Use SPACE in game to jump, arrows/A-D to move.", 0xffffff, nullptr);
 }
 
 void Psyhm9Game::drawSelectionRow(int startX, int startY)
 {
+    int baseX = uiX(startX);
+    int baseY = uiY(startY);
     for (int i = 0; i < static_cast<int>(m_levelFiles.size()); ++i)
     {
-        int boxX = startX + i * 160;
-        int boxY = startY;
+        int boxX = baseX + i * 160;
+        int boxY = baseY;
         int boxWidth = 130;
         int boxHeight = 60;
         if (i == m_selectedLevel)
@@ -251,12 +261,13 @@ void Psyhm9Game::virtMainLoopPostUpdate()
             setState(GameState::LevelComplete);
             return;
         }
-        if (playerHitEnemy() || playerFellOut())
+        if (playerHitEnemy() || playerHitHazard() || playerFellOut())
         {
             m_gameOverStartTime = getRawTime();
             setState(GameState::GameOver);
             return;
         }
+        updateCamera(false);
     }
 
     if (m_state == GameState::GameOver)
@@ -284,7 +295,13 @@ void Psyhm9Game::loadLevel(int index)
         return;
 
     if (m_level.loadFromFile(m_levelFiles[index]))
+    {
         m_tileManager.loadFromLevel(m_level);
+        m_levelHasAnimatedTiles = std::any_of(
+            m_level.tiles.begin(),
+            m_level.tiles.end(),
+            [](int value) { return value == kPsyhm9TileLava; });
+    }
 }
 
 void Psyhm9Game::buildLevelObjects()
@@ -302,7 +319,7 @@ void Psyhm9Game::buildLevelObjects()
     for (int i = 0; i < enemyCount; ++i)
     {
         const auto& enemy = m_level.enemies[i];
-        Psyhm9Enemy* enemyObject = new Psyhm9Enemy(this, &m_tileManager, enemy.tileX, enemy.tileY);
+        Psyhm9Enemy* enemyObject = new Psyhm9Enemy(this, &m_tileManager, m_player, enemy.tileX, enemy.tileY);
         storeObjectInArray(i + 1, enemyObject);
         m_enemies.push_back(enemyObject);
     }
@@ -313,6 +330,8 @@ void Psyhm9Game::startLevel(int index)
     m_currentLevel = index;
     loadLevel(index);
     buildLevelObjects();
+    m_lastAnimatedFrame = -1;
+    updateCameraOffsets();
     setState(GameState::Playing);
 }
 
@@ -325,7 +344,11 @@ void Psyhm9Game::setState(GameState state)
         pause();
 
     if (m_state == GameState::Menu)
+    {
         m_selectedLevel = m_currentLevel;
+        setCameraOffset(0, 0);
+        m_lastAnimatedFrame = -1;
+    }
 
     lockAndSetupBackground();
     redrawDisplay();
@@ -395,4 +418,97 @@ bool Psyhm9Game::playerFellOut() const
         return false;
 
     return m_player->getDrawingRegionTop() > getWindowHeight();
+}
+
+bool Psyhm9Game::playerHitHazard() const
+{
+    if (!m_player)
+        return false;
+
+    int left = m_player->getDrawingRegionLeft();
+    int right = m_player->getDrawingRegionRight();
+    int top = m_player->getDrawingRegionTop();
+    int bottom = m_player->getDrawingRegionBottom();
+
+    int startX = m_tileManager.getMapXForScreenX(left);
+    int endX = m_tileManager.getMapXForScreenX(right);
+    int startY = m_tileManager.getMapYForScreenY(top);
+    int endY = m_tileManager.getMapYForScreenY(bottom);
+
+    for (int mapY = startY; mapY <= endY; ++mapY)
+    {
+        for (int mapX = startX; mapX <= endX; ++mapX)
+        {
+            if (m_tileManager.isHazardTile(mapX, mapY))
+                return true;
+        }
+    }
+
+    return false;
+}
+
+void Psyhm9Game::updateCamera(bool forceRedraw)
+{
+    if (!m_player)
+        return;
+
+    int previousOffsetX = m_cameraOffsetX;
+    int previousOffsetY = m_cameraOffsetY;
+    updateCameraOffsets();
+    bool offsetChanged = previousOffsetX != m_cameraOffsetX || previousOffsetY != m_cameraOffsetY;
+
+    int animationFrame = 0;
+    bool animationChanged = false;
+    if (m_levelHasAnimatedTiles)
+    {
+        animationFrame = (getRawTime() / Psyhm9TileManager::kAnimatedTileFrameMs) % 2;
+        animationChanged = animationFrame != m_lastAnimatedFrame;
+    }
+
+    if (forceRedraw || offsetChanged || animationChanged)
+    {
+        if (m_levelHasAnimatedTiles)
+            m_lastAnimatedFrame = animationFrame;
+        lockAndSetupBackground();
+        redrawDisplay();
+    }
+    else if (m_levelHasAnimatedTiles)
+    {
+        m_lastAnimatedFrame = animationFrame;
+    }
+}
+
+void Psyhm9Game::updateCameraOffsets()
+{
+    if (!m_player)
+        return;
+
+    int playerCenterX = (m_player->getDrawingRegionLeft() + m_player->getDrawingRegionRight()) / 2;
+    int playerCenterY = (m_player->getDrawingRegionTop() + m_player->getDrawingRegionBottom()) / 2;
+    int levelWidth = m_level.width * kPsyhm9TileSize;
+    int levelHeight = m_level.height * kPsyhm9TileSize;
+
+    int minOffsetX = std::min(0, getWindowWidth() - levelWidth);
+    int minOffsetY = std::min(0, getWindowHeight() - levelHeight);
+    int newOffsetX = std::clamp(getWindowWidth() / 2 - playerCenterX, minOffsetX, 0);
+    int newOffsetY = std::clamp(getWindowHeight() / 2 - playerCenterY, minOffsetY, 0);
+
+    setCameraOffset(newOffsetX, newOffsetY);
+}
+
+void Psyhm9Game::setCameraOffset(int offsetX, int offsetY)
+{
+    m_cameraOffsetX = offsetX;
+    m_cameraOffsetY = offsetY;
+    m_cameraTranslation.setOffset(offsetX, offsetY);
+}
+
+int Psyhm9Game::uiX(int screenX) const
+{
+    return screenX - m_cameraOffsetX;
+}
+
+int Psyhm9Game::uiY(int screenY) const
+{
+    return screenY - m_cameraOffsetY;
 }

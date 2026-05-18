@@ -71,30 +71,36 @@ bool Psyhm9LevelData::loadFromFile(const std::string& filePath)
         for (int x = 0; x < width; ++x)
         {
             char value = rows[y][x];
-            int tileValue = 0;
+            int tileValue = kPsyhm9TileEmpty;
             switch (value)
             {
             case '#':
-                tileValue = 1;
+                tileValue = kPsyhm9TileSolid;
+                break;
+            case '^':
+                tileValue = kPsyhm9TileSpikes;
+                break;
+            case 'L':
+                tileValue = kPsyhm9TileLava;
                 break;
             case 'S':
                 startTileX = x;
                 startTileY = y;
                 startSet = true;
-                tileValue = 0;
+                tileValue = kPsyhm9TileEmpty;
                 break;
             case 'F':
                 goalTileX = x;
                 goalTileY = y;
                 goalSet = true;
-                tileValue = 0;
+                tileValue = kPsyhm9TileEmpty;
                 break;
             case 'E':
                 enemies.push_back({x, y});
-                tileValue = 0;
+                tileValue = kPsyhm9TileEmpty;
                 break;
             default:
-                tileValue = 0;
+                tileValue = kPsyhm9TileEmpty;
                 break;
             }
             tiles[x + y * width] = tileValue;

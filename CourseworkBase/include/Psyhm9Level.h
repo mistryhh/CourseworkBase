@@ -6,6 +6,10 @@
 constexpr int kPsyhm9TileSize = 70;
 constexpr int kPsyhm9MapWidth = 26;
 constexpr int kPsyhm9MapHeight = 12;
+constexpr int kPsyhm9TileEmpty = 0;
+constexpr int kPsyhm9TileSolid = 1;
+constexpr int kPsyhm9TileSpikes = 2;
+constexpr int kPsyhm9TileLava = 3;
 
 struct Psyhm9LevelData
 {
