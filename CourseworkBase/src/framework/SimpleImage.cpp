@@ -282,7 +282,7 @@ iWidthInImage, iHeightInImage : size of source rectangle
 */
 void SimpleImage::renderImageBlit(BaseEngine* pEngine, DrawingSurface* pTarget,
 	int iXDrawLocation, int iYDrawLocation, int iTargetWidth, int iTargetHeight,
-	int iLeftInImage, int iTopInImage, int iWidthInImage, int iHeightInImage)
+	int iLeftInImage, int iTopInImage, int iWidthInImage, int iHeightInImage) const
 {
 #if AVOID_BLIT
 	renderImageWithMask( pTarget,
@@ -493,5 +493,4 @@ void SimpleImage::renderImageApplyingMapping(BaseEngine* pEngine, DrawingSurface
 		}
 	}
 }
-
 

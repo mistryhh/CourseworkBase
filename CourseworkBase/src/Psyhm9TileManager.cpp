@@ -6,6 +6,8 @@
 
 namespace
 {
+    constexpr int kMaskColour = 0x000000;
+
     std::string normaliseTheme(const std::string& theme)
     {
         if (theme == "grass" || theme == "sand" || theme == "dirt" || theme == "snow" || theme == "purple")
@@ -15,7 +17,9 @@ namespace
 
     SimpleImage loadTile(const std::string& path)
     {
-        return ImageManager::get()->getImagebyURL(path, true, true);
+        SimpleImage image = ImageManager::get()->getImagebyURL(path, true, true);
+        image.setTransparencyColour(kMaskColour);
+        return image;
     }
 }
 
@@ -67,7 +71,6 @@ void Psyhm9TileManager::virtDrawTileAt(
     int iMapX, int iMapY,
     int iStartPositionScreenX, int iStartPositionScreenY) const
 {
-    (void)pEngine;
     if (getMapValue(iMapX, iMapY) == 0)
         return;
 
@@ -104,10 +107,12 @@ void Psyhm9TileManager::virtDrawTileAt(
         tileImage = &m_tileSet.blockRight;
     }
 
-    tileImage->renderImageWithMask(
+    tileImage->renderImageBlit(
+        pEngine,
         pSurface,
-        0, 0,
         iStartPositionScreenX, iStartPositionScreenY,
+        getTileWidth(), getTileHeight(),
+        0, 0,
         tileImage->getWidth(), tileImage->getHeight());
 }
 
