@@ -1,7 +1,5 @@
 #include "header.h"
-
 #include "Psyhm9Game.h"
-
 #include <cstdio>
 
 namespace
@@ -187,15 +185,15 @@ void Psyhm9Game::virtKeyDown(int iKeyCode)
         }
         break;
     case GameState::Playing:
-        if (iKeyCode == SDLK_p)
+        if (iKeyCode == SDLK_P)
         {
             setState(GameState::Paused);
         }
-        else if (iKeyCode == SDLK_r)
+        else if (iKeyCode == SDLK_R)
         {
             startLevel(m_currentLevel);
         }
-        else if (iKeyCode == SDLK_m)
+        else if (iKeyCode == SDLK_M)
         {
             setState(GameState::Menu);
         }
@@ -205,11 +203,11 @@ void Psyhm9Game::virtKeyDown(int iKeyCode)
         }
         break;
     case GameState::Paused:
-        if (iKeyCode == SDLK_p)
+        if (iKeyCode == SDLK_P)
         {
             setState(GameState::Playing);
         }
-        else if (iKeyCode == SDLK_m)
+        else if (iKeyCode == SDLK_M)
         {
             setState(GameState::Menu);
         }
@@ -222,17 +220,17 @@ void Psyhm9Game::virtKeyDown(int iKeyCode)
             else
                 setState(GameState::GameComplete);
         }
-        else if (iKeyCode == SDLK_m)
+        else if (iKeyCode == SDLK_M)
         {
             setState(GameState::Menu);
         }
         break;
     case GameState::GameOver:
-        if (iKeyCode == SDLK_RETURN || iKeyCode == SDLK_KP_ENTER || iKeyCode == SDLK_r)
+        if (iKeyCode == SDLK_RETURN || iKeyCode == SDLK_KP_ENTER || iKeyCode == SDLK_R)
         {
             startLevel(m_currentLevel);
         }
-        else if (iKeyCode == SDLK_m)
+        else if (iKeyCode == SDLK_M)
         {
             setState(GameState::Menu);
         }

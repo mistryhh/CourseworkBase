@@ -105,6 +105,7 @@ xcopy /y /d /i /e "$(ProjectDir)resources" "$(OutDir)resources\"</Command>
     <ClInclude Include="include\framework\DrawingSurface.h" />
     <ClInclude Include="include\framework\FilterPoints.h" />
     <ClInclude Include="header.h" />
+    <ClInclude Include="include\Psyhm9Enemy.h" />
     <ClInclude Include="include\Psyhm9Game.h" />
     <ClInclude Include="include\Psyhm9Level.h" />
     <ClInclude Include="include\Psyhm9Player.h" />
@@ -134,6 +135,7 @@ xcopy /y /d /i /e "$(ProjectDir)resources" "$(OutDir)resources\"</Command>
     <ClCompile Include="src\demos\advanced\FlashingDemo.cpp" />
     <ClCompile Include="src\demos\advanced\ImageMappingDemo.cpp" />
     <ClCompile Include="mainfunction.cpp" />
+    <ClCompile Include="src\Psyhm9Enemy.cpp" />
     <ClCompile Include="src\Psyhm9Game.cpp" />
     <ClCompile Include="src\Psyhm9Level.cpp" />
     <ClCompile Include="src\Psyhm9Player.cpp" />

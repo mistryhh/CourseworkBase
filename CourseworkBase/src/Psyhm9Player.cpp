@@ -93,8 +93,8 @@ void Psyhm9Player::virtDoUpdate(int iCurrentTime)
     if (getEngine()->isPaused())
         return;
 
-    bool movingLeft = getEngine()->isKeyPressed(SDLK_LEFT) || getEngine()->isKeyPressed(SDLK_a);
-    bool movingRight = getEngine()->isKeyPressed(SDLK_RIGHT) || getEngine()->isKeyPressed(SDLK_d);
+    bool movingLeft = getEngine()->isKeyPressed(SDLK_LEFT) || getEngine()->isKeyPressed(SDLK_A);
+    bool movingRight = getEngine()->isKeyPressed(SDLK_RIGHT) || getEngine()->isKeyPressed(SDLK_D);
     bool jumpPressed = getEngine()->isKeyPressed(SDLK_SPACE) || getEngine()->isKeyPressed(SDLK_UP);
 
     if (movingLeft == movingRight)

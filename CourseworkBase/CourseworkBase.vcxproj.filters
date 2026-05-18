@@ -138,6 +138,9 @@
     <ClInclude Include="include\demos\advanced\ZoomingDemo.h">
       <Filter>Header Files\demos\advanced</Filter>
     </ClInclude>
+    <ClInclude Include="include\Psyhm9Enemy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mainfunction.cpp">
@@ -205,6 +208,9 @@
     </ClCompile>
     <ClCompile Include="src\demos\advanced\ZoomingDemo.cpp">
       <Filter>Source Files\demos\advanced</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Psyhm9Enemy.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
