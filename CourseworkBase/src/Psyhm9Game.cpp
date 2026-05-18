@@ -6,6 +6,10 @@
 namespace
 {
     constexpr int kMaskColour = 0x000000;
+    constexpr int clampInt(int value, int minValue, int maxValue)
+    {
+        return value < minValue ? minValue : (value > maxValue ? maxValue : value);
+    }
 }
 
 Psyhm9Game::Psyhm9Game()
@@ -490,8 +494,8 @@ void Psyhm9Game::updateCameraOffsets()
 
     int minOffsetX = std::min(0, getWindowWidth() - levelWidth);
     int minOffsetY = std::min(0, getWindowHeight() - levelHeight);
-    int newOffsetX = std::clamp(getWindowWidth() / 2 - playerCenterX, minOffsetX, 0);
-    int newOffsetY = std::clamp(getWindowHeight() / 2 - playerCenterY, minOffsetY, 0);
+    int newOffsetX = clampInt(getWindowWidth() / 2 - playerCenterX, minOffsetX, 0);
+    int newOffsetY = clampInt(getWindowHeight() / 2 - playerCenterY, minOffsetY, 0);
 
     setCameraOffset(newOffsetX, newOffsetY);
 }
