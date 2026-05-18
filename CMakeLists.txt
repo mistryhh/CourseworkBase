@@ -41,6 +41,12 @@ set(SOURCE_FILES
     CourseworkBase/src/demos/MazeDemoObject.cpp
     CourseworkBase/src/demos/MazeDemoTileManager.cpp
 
+    # Psyhm9 coursework source files
+    CourseworkBase/src/Psyhm9Game.cpp
+    CourseworkBase/src/Psyhm9Level.cpp
+    CourseworkBase/src/Psyhm9Player.cpp
+    CourseworkBase/src/Psyhm9TileManager.cpp
+
     # Advanced demo source files
     CourseworkBase/src/demos/advanced/DraggingDemo.cpp
     CourseworkBase/src/demos/advanced/FlashingDemo.cpp
